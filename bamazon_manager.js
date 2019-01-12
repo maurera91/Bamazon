@@ -94,9 +94,33 @@ function viewLowInventory(){
 
 };
 function addToInventory(){
-    inquirer.query({
+    viewProducts();
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "Please enter the item ID of the item you would like to buy.",
+            name: "inventory_id"  
+        },
+        {
+            type: "input",
+            message: "Please enter the new total quantity of the item you are adding to the inventory.",
+            name: "new_quantity"
+        }
+    ]).then(function(response){
+        connection.query(
+            `update products set ? WHERE item_id = ${response.inventory_id}`,
+            [
+                {
+                    quantity: new_quantity
+                }
+            ],
+            function(error, res){
+                if (error) throw err;
+                console.log(`You have set the inventory of the ${res[0].product.name} to ${res[0].quantity}`);
+                app();
+            }
 
-    
+        )
     })
 
 };

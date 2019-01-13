@@ -125,7 +125,42 @@ function addToInventory(){
 
 };
 function addNewProduct(){
-
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "What is the name of the product?",
+            name: "new_product_name"
+        },
+        {
+            type: "input",
+            message: "What department is the product in?",
+            name: "new_product_department"
+        },
+        {
+            type: "input",
+            message: "How much does the item cost?",
+            name: "new_product_cost"
+        },
+        {
+            type: "input",
+            message: "How many of item is in stock?",
+            name: "new_product_quantity"
+        }
+    ]).then(function(res){
+        connection.query(
+            "INSERT INTO products SET ?",
+            {
+                product_name: res.new_product_name,
+                department: res.new_product_department,
+                price: res.new_product_cost,
+                quantity: res.new_product_quantity
+            },
+            function(error, result){
+                if (error) throw error;
+                console.log(result.affectedRows + " product inserted");
+            }
+        )
+    })
 };
 function quit(){
     console.log("Quitting the program.")

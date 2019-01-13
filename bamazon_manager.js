@@ -33,13 +33,13 @@ function app(){
     ]).then(function(response){
         switch (response.main_menu){
         case "View Products":
-            viewProducts();
+            viewProducts(app);
             break; 
         case "View Low inventory":
             viewLowInventory();
             break;
         case "Add to Inventory":
-            addToInventory();
+            viewProducts(addToInventory);
             break;
         case "Add New Product":
             addNewProduct();
@@ -51,7 +51,7 @@ function app(){
     })
 
 };
-function viewProducts(){
+function viewProducts(callback){
     connection.query(
         "SELECT * FROM products",
         function(err,result){
@@ -66,7 +66,7 @@ function viewProducts(){
                 ------------------------`
                 );
             }  
-            app();  
+            callback && callback();  
     });
 
 };
@@ -75,7 +75,7 @@ function viewLowInventory(){
         "SELECT * FROM products WHERE quantity < 5",
         function(err,result){
             if (err) throw err;
-            if (result){
+            if (result.length != 0){
             for (let item of result){
                 console.log(
                 `ITEM NAME: ${item.product_name}\n
@@ -94,11 +94,10 @@ function viewLowInventory(){
 
 };
 function addToInventory(){
-    viewProducts();
     inquirer.prompt([
         {
             type: "input",
-            message: "Please enter the item ID of the item you would like to buy.",
+            message: "Please enter the item ID of the item you would like to adjust.",
             name: "inventory_id"  
         },
         {
@@ -111,12 +110,12 @@ function addToInventory(){
             `update products set ? WHERE item_id = ${response.inventory_id}`,
             [
                 {
-                    quantity: new_quantity
+                    quantity: response.new_quantity
                 }
             ],
             function(error, res){
                 if (error) throw err;
-                console.log(`You have set the inventory of the ${res[0].product.name} to ${res[0].quantity}`);
+                console.log(`You have set the inventory to ${response.new_quantity}`);
                 app();
             }
 
@@ -151,13 +150,14 @@ function addNewProduct(){
             "INSERT INTO products SET ?",
             {
                 product_name: res.new_product_name,
-                department: res.new_product_department,
+                department_name: res.new_product_department,
                 price: res.new_product_cost,
                 quantity: res.new_product_quantity
             },
             function(error, result){
                 if (error) throw error;
                 console.log(result.affectedRows + " product inserted");
+                app();
             }
         )
     })

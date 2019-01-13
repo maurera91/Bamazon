@@ -74,7 +74,7 @@ function app(){
                             }
                         ],
                         function(err, res){
-                            console.log(`You have purchased ${main_response.purchase_quantity} ${response[0].product_name} for $${parseInt(main_response.purchase_quantity) * parseInt(response[0].price)}`)
+                            console.log(`You have purchased ${main_response.purchase_quantity} ${response[0].product_name} for $${parseInt(main_response.purchase_quantity) * parseFloat(response[0].price)}`)
                             inquirer.prompt([
                             {
                                 type: "list",
